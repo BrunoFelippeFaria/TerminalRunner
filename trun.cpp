@@ -38,12 +38,12 @@ int main(int argc, char *argv[]) {
     system(comando.c_str());
   }
 
-  if (tipo == ".py") {
+  else if (tipo == ".py") {
     string comando = string("python ") + arquivo;
     system(comando.c_str());
   }
 
-  if (tipo == ".sh") {
+  else if (tipo == ".sh") {
     string comando = string("bash ") + arquivo;
     system(comando.c_str());
   }

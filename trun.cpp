@@ -33,8 +33,17 @@ int main(int argc, char *argv[]) {
     size_t ponto = arquivo.find(".");
     string exec = arquivo.substr(0, ponto);
 
-    string comando =
-        string("g++ ") + arquivo + string(" -o ") + exec + " && ./" + exec;
+    string comando;
+    size_t dir = arquivo.rfind("/");
+    // caminho completo
+    if (dir != string::npos) {
+      comando =
+          string("g++ ") + arquivo + string(" -o ") + exec + " && " + exec;
+    } else {  // caminho relativo
+      comando =
+          string("g++ ") + arquivo + string(" -o ") + exec + " && ./" + exec;
+    }
+
     system(comando.c_str());
   }
 

@@ -8,6 +8,7 @@ Por enquanto o Terminal Runner funciona apenas no Linux.
 
 ## Linguagens suportadas
 
+- c
 - c++
 - python
 - bash

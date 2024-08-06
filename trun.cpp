@@ -1,13 +1,26 @@
-#include <algorithm>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <vector>
 using namespace std;
 
+// essa função adiciona os argumentos passados para o programa
+string addArgumentos(int argc, vector<string> argumentos) {
+  string co;
+  if (argc > 2) {
+    for (int i = 0; i < argumentos.size(); i++) {
+      co += string(" ") + argumentos[i];
+    }
+  }
+  return co;
+}
+
+// função principal do programa
 int main(int argc, char *argv[]) {
   string tipo = "n";
+  vector<string> argumentos;
   string arquivo;
   if (argc > 1) {
     arquivo = argv[1];
@@ -29,6 +42,13 @@ int main(int argc, char *argv[]) {
   } else {
     cout << "porfavor, forneça um arquivo\n";
     return 0;
+  }
+
+  // verifica se existem outros argumentos
+  if (argc > 2) {
+    for (int i = 2; i < argc; i++) {
+      argumentos.push_back(argv[i]);
+    }
   }
 
   // remover a extenção.
@@ -54,6 +74,8 @@ int main(int argc, char *argv[]) {
           string("g++ ") + arquivo + string(" -o ") + exec + " && ./" + exec;
     }
 
+    comando += addArgumentos(argc, argumentos);
+
     system(comando.c_str());
   }
   // c
@@ -68,17 +90,21 @@ int main(int argc, char *argv[]) {
           string("gcc ") + arquivo + string(" -o ") + exec + " && ./" + exec;
     }
 
+    comando += addArgumentos(argc, argumentos);
+
     system(comando.c_str());
   }
   // python
   else if (tipo == ".py") {
     string comando = string("python ") + arquivo;
+    comando += addArgumentos(argc, argumentos);
     system(comando.c_str());
   }
 
   // bash
   else if (tipo == ".sh") {
     string comando = string("bash ") + arquivo;
+    comando += addArgumentos(argc, argumentos);
     system(comando.c_str());
   }
 

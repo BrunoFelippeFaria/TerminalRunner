@@ -3,31 +3,27 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
-#include <vector>
 using namespace std;
-
 // essa função adiciona os argumentos passados para o programa
-string addArgumentos(int argc, vector<string> argumentos) {
-  string co;
-  if (argc > 2) {
-    for (int i = 0; i < argumentos.size(); i++) {
-      co += string(" ") + argumentos[i];
-    }
+string addArgumentos(int argc, char *argv[]) {
+  string argumentos;
+  for (int i = 2; i < argc; i++) {
+    argumentos += " " + string(argv[i]);
   }
-  return co;
+  return argumentos;
 }
 
 // função principal do programa
 int main(int argc, char *argv[]) {
   string tipo = "n";
-  vector<string> argumentos;
   string arquivo;
+
   if (argc > 1) {
     arquivo = argv[1];
-    // verifica tipo do arquivo
-    string exts[] = {".cpp", ".py", ".sh", ".c"};
+    // verifica tipo do arquivo e se ele é compativel
+    const string exts[] = {".cpp", ".py", ".sh", ".c"};
     size_t ext;
-    for (size_t i = 0; i < sizeof(exts) / sizeof(exts[0]); ++i) {
+    for (size_t i = 0; i < sizeof(exts) / sizeof(exts[0]); i++) {
       ext = arquivo.rfind(exts[i]);
       if (ext != string::npos) {
         tipo = exts[i];
@@ -44,12 +40,8 @@ int main(int argc, char *argv[]) {
     return 0;
   }
 
-  // verifica se existem outros argumentos
-  if (argc > 2) {
-    for (int i = 2; i < argc; i++) {
-      argumentos.push_back(argv[i]);
-    }
-  }
+  // variaveis
+  string comando;
 
   // remover a extenção.
   size_t ponto = arquivo.find(".");
@@ -64,49 +56,28 @@ int main(int argc, char *argv[]) {
 
   // c++
   if (tipo == ".cpp") {
-    string comando;
-    // caminho completo
-    if (caminhoCompleto) {
-      comando =
-          string("g++ ") + arquivo + string(" -o ") + exec + " && " + exec;
-    } else {  // caminho relativo
-      comando =
-          string("g++ ") + arquivo + string(" -o ") + exec + " && ./" + exec;
-    }
-
-    comando += addArgumentos(argc, argumentos);
-
-    system(comando.c_str());
+    comando =
+        (caminhoCompleto ? "g++ " + arquivo + " -o " + exec + "&& " + exec
+                         : "g++ " + arquivo + " -o " + exec + "&& ./" + exec);
   }
   // c
   else if (tipo == ".c") {
-    string comando;
-    // caminho completo
-    if (caminhoCompleto) {
-      comando =
-          string("gcc ") + arquivo + string(" -o ") + exec + " && " + exec;
-    } else {  // caminho relativo
-      comando =
-          string("gcc ") + arquivo + string(" -o ") + exec + " && ./" + exec;
-    }
-
-    comando += addArgumentos(argc, argumentos);
-
-    system(comando.c_str());
+    comando =
+        (caminhoCompleto ? "gcc " + arquivo + " -o " + exec + "&& " + exec
+                         : "gcc " + arquivo + " -o " + exec + "&& ./" + exec);
   }
   // python
   else if (tipo == ".py") {
-    string comando = string("python ") + arquivo;
-    comando += addArgumentos(argc, argumentos);
-    system(comando.c_str());
+    comando = string("python ") + arquivo;
   }
 
   // bash
   else if (tipo == ".sh") {
-    string comando = string("bash ") + arquivo;
-    comando += addArgumentos(argc, argumentos);
-    system(comando.c_str());
+    comando = string("bash ") + arquivo;
   }
+
+  comando += addArgumentos(argc, argv);
+  system(comando.c_str());
 
   return 0;
 }

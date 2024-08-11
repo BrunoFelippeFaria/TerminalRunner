@@ -21,7 +21,8 @@ int main(int argc, char *argv[]) {
   if (argc > 1) {
     arquivo = argv[1];
     // verifica tipo do arquivo e se ele é compativel
-    const string exts[] = {".cpp", ".py", ".sh", ".c"};
+    const string exts[] = {".cpp", ".py", ".sh",  ".c",  ".java",
+                           ".go",  ".js", ".lua", ".php"};
     size_t ext;
     for (size_t i = 0; i < sizeof(exts) / sizeof(exts[0]); i++) {
       ext = arquivo.rfind(exts[i]);
@@ -66,14 +67,40 @@ int main(int argc, char *argv[]) {
         (caminhoCompleto ? "gcc " + arquivo + " -o " + exec + "&& " + exec
                          : "gcc " + arquivo + " -o " + exec + "&& ./" + exec);
   }
+
+  // java
+  else if (tipo == ".java") {
+    comando = "java " + arquivo;
+  }
+
+  // go
+  else if (tipo == ".go") {
+    comando = "go run " + arquivo;
+  }
+
   // python
   else if (tipo == ".py") {
-    comando = string("python ") + arquivo;
+    comando = "python " + arquivo;
+  }
+
+  // javascript
+  else if (tipo == ".js") {
+    comando = "node " + arquivo;
+  }
+
+  // lua
+  else if (tipo == ".lua") {
+    comando = "lua " + arquivo;
+  }
+
+  // php
+  else if (tipo == ".php") {
+    comando = "php " + arquivo;
   }
 
   // bash
   else if (tipo == ".sh") {
-    comando = string("bash ") + arquivo;
+    comando = "bash " + arquivo;
   }
 
   comando += addArgumentos(argc, argv);

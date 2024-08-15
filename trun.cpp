@@ -1,6 +1,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
+#include <filesystem>
 #include <iostream>
 #include <string>
 using namespace std;
@@ -11,6 +12,20 @@ string addArgumentos(int argc, char *argv[]) {
     argumentos += " " + string(argv[i]);
   }
   return argumentos;
+}
+
+bool existe(string caminho) {
+  filesystem::path findc = caminho;
+  if (filesystem::exists(findc)) {
+    return true;
+  }
+
+  return false;
+}
+
+string extrairNomeArquivo(const std::string caminho) {
+  filesystem::path p(caminho);
+  return p.filename().string();
 }
 
 // função principal do programa
@@ -55,11 +70,42 @@ int main(int argc, char *argv[]) {
     caminhoCompleto = true;
   }
 
+  // cmake
+
+  if (existe("CMakeLists.txt")) {
+    if (existe("build")) {
+      comando = "cd build && make && cd ..";
+    }
+
+    else {
+      comando = "mkdir build && cd build && cmake .. && make && cd ..";
+    }
+
+    size_t find = arquivo.find(exec);
+    string caminho = arquivo.substr(0, find);
+
+    comando += (caminhoCompleto
+                    ? " && " + caminho + "build/" + extrairNomeArquivo(exec)
+                    : " && ./" + exec);
+
+  }
+
+  // make
+
+  else if (existe("Makefile")) {
+    if (existe(exec)) {
+      system(("rm " + exec).c_str());
+    }
+    comando = "make";
+    comando += (caminhoCompleto ? " && " + exec : " && ./" + exec);
+  }
+
   // c++
-  if (tipo == ".cpp") {
+  else if (tipo == ".cpp") {
     comando =
         (caminhoCompleto ? "g++ " + arquivo + " -o " + exec + "&& " + exec
                          : "g++ " + arquivo + " -o " + exec + "&& ./" + exec);
+
   }
   // c
   else if (tipo == ".c") {

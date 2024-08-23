@@ -20,6 +20,7 @@ bool existe(string caminho) {
     return true;
   }
 
+  void changeTxt();
   return false;
 }
 
@@ -36,8 +37,8 @@ int main(int argc, char *argv[]) {
   if (argc > 1) {
     arquivo = argv[1];
     // verifica tipo do arquivo e se ele é compativel
-    const string exts[] = {".cpp", ".py", ".sh",  ".c",  ".java",
-                           ".go",  ".js", ".lua", ".php"};
+    const string exts[] = {".cpp", ".py", ".sh",  ".c",   ".java",
+                           ".go",  ".js", ".lua", ".php", ".rs"};
     size_t ext;
     for (size_t i = 0; i < sizeof(exts) / sizeof(exts[0]); i++) {
       ext = arquivo.rfind(exts[i]);
@@ -71,10 +72,13 @@ int main(int argc, char *argv[]) {
   }
 
   // cmake
-
-  if (existe("CMakeLists.txt")) {
+  if (existe("CMakeLists.txt") or existe("../CMakeLists.txt")) {
     if (existe("build")) {
       comando = "cd build && make && cd ..";
+    }
+
+    else if (existe("../build")) {
+      comando = "cd .. && cd build && make && cd ..";
     }
 
     else {
@@ -92,7 +96,7 @@ int main(int argc, char *argv[]) {
 
   // make
 
-  else if (existe("Makefile")) {
+  else if (existe("Makefile") or existe("../Makefile")) {
     if (existe(exec)) {
       system(("rm " + exec).c_str());
     }
@@ -112,6 +116,11 @@ int main(int argc, char *argv[]) {
     comando =
         (caminhoCompleto ? "gcc " + arquivo + " -o " + exec + "&& " + exec
                          : "gcc " + arquivo + " -o " + exec + "&& ./" + exec);
+  }
+
+  // rust
+  else if (tipo == ".rs") {
+    comando = "rustc " + arquivo + " && ./" + exec;
   }
 
   // java

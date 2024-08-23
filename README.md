@@ -17,6 +17,7 @@ Por enquanto o Terminal Runner funciona apenas no Linux.
 - bash
 - java
 - go
+- rust
 
 
 ## Instalação no Linux
